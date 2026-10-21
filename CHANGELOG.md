@@ -2,6 +2,13 @@
 
 > 按版本记录"改了什么、为什么、怎么验证的"。当前用法看 [README.md](README.md)。
 
+## 2026-10-21 · Node 24 下的 `npm test`
+
+- 现象：`npm test` 用的是 `node --test test/`，在当前 Node 24 上直接 `Cannot find module '...\test'`（0 pass / 1 fail）。
+- 修法：改成 `node --test`（自动发现 `test/**/*.test.mjs`；Node 20.11+ / 22 / 24 都支持，不依赖 shell 展开）。
+- 验证：`npm test` → `tests 93 / pass 93 / fail 0`（exit 0）。
+
+
 ## ✅ 已修缺陷（第 14 轮实测发现，第 16 轮修复并双向验证）
 
 **无 Web 服务的 profile 里插件不激活。** 隔离 headless 实例的原始输出：

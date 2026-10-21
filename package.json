@@ -56,7 +56,7 @@
     "dsh": ">=0.2.0-rc.2"
   },
   "scripts": {
-    "test": "node --test test/",
+    "test": "node --test",
     "check": "node tools/check.mjs",
     "guards": "node tools/guard-check.mjs",
     "pack:check": "npm pack --dry-run --json",
