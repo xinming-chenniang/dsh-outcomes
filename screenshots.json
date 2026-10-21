@@ -1,0 +1,12 @@
+[
+  {
+    "lang": "en",
+    "path": "assets/screenshots/manager-en.png",
+    "page": "/__dsh-outcomes/"
+  },
+  {
+    "lang": "zh",
+    "path": "assets/screenshots/manager-zh.png",
+    "page": "/__dsh-outcomes/?lang=zh"
+  }
+]

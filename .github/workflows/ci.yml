@@ -1,0 +1,28 @@
+name: ci
+
+# 两个平台都跑：POSIX 与 Windows 的分支（路径、spawn、换行）只有各自跑过才算验过。
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        node: ['20', '22', '24']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - run: node --version
+      - name: 单元测试
+        run: npm test
+      - name: 仓库自检（语法 + CLI 冒烟 + 泄漏扫描）
+        run: npm run check
+      - name: 打包清单（dry-run）
+        run: npm run pack:check

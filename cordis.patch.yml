@@ -1,0 +1,10 @@
+# dsh-outcomes 由两个 entry 组成 —— 因为它们依赖的服务不同：
+#   dsh-outcomes      工具半（inject: tools）：headless / 纯 agent profile 里也能用
+#   dsh-outcomes-web  页面半（inject: webServer）：没有 Web 服务时保持 pending，无害
+- insert:
+    - id: dsh-outcomes
+      name: 'dsh-outcomes'
+      config: {}
+    - id: dsh-outcomes-web
+      name: 'dsh-outcomes/web'
+      config: {}

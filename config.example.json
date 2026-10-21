@@ -1,0 +1,17 @@
+{
+  "//": "dsh-outcomes 的配置样例。真正的 config 有三种来源，优先级从高到低：",
+  "//1": "① profile 的 cordis.patch.yml 里按 id=dsh-outcomes 覆盖 config（key 与下面同名）；",
+  "//2": "② 环境变量（DSH_OUTCOMES_DIR 只覆盖 dir）；",
+  "//3": "③ 用户级设置文件 $DSH_HOME/.dsh-outcomes.json（默认 ~/.dsh/.dsh-outcomes.json）。",
+  "//4": "不配也能跑：清单默认落在 $DSH_HOME/plugin-data/dsh-outcomes/。改完要重启 DSH 才生效。",
+
+  "dir": "~/.dsh/plugin-data/dsh-outcomes",
+  "registry": null,
+  "deleted": null,
+  "maxTitleLength": 120,
+  "pageSize": 200,
+  "//5": "pageSize = 服务端默认窗口：/api/list 不传 limit 时给这么多（显式 limit 也尊重，硬上限 10000）。",
+  "//6": "管理页按这个窗口拉数据；在搜索框里输入会带 q 重新查服务端，所以能搜到窗口之外的条目。",
+  "allowOutsideCwd": true,
+  "treatSystemTempAsWarning": true
+}

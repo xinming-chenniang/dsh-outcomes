@@ -1,0 +1,11 @@
+# 运行期事实，不是源码 —— 一律不进仓库（`files` 白名单已把它们挡在发布包外）
+node_modules/
+data/
+config.json
+*.log
+*.tmp
+*.bak
+.package-check.json
+
+# 截图脚本的演示现场（跑完自动删，异常退出时可能残留）
+.demo-tmp-*/
