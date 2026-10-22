@@ -3,7 +3,7 @@
 零依赖、无构建步骤：克隆下来就能跑。需要 **Node ≥ 20**（用 `node --test`，不装测试框架）。
 
 ```bash
-npm test        # 95 条：store / paths / host / page / client / e2e / import / shipped / docs
+npm test        # 96 条：store / paths / host / page / client / e2e / import / shipped / docs
 npm run check   # 逐文件语法 + CLI 冒烟 + 泄漏扫描
 npm run preflight   # 上面两条 + 打包清单，退出码即结论
 ```

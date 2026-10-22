@@ -64,6 +64,31 @@ test('registry / deleted 可单独指到别处，缺省跟着 dir', () => {
   assert.equal(custom.deleted, join(home, 'x.jsonl'))
 })
 
+test('显式 dir 时，设置文件里的 registry/deleted 不能把清单拽回旧路径', () => {
+  const home = fakeHome()
+  const settings = {
+    dir: join(home, 'old'),
+    registry: join(home, 'old', 'index.jsonl'),
+    deleted: join(home, 'old', 'deleted.jsonl'),
+  }
+
+  // ① config.dir 显式给定：registry/deleted 缺省跟着它，忽略设置文件里的旧值
+  const resolved = resolveOptions({ dir: join(home, 'new') }, { DSH_HOME: home }, { settings })
+  assert.equal(resolved.dir, join(home, 'new'))
+  assert.equal(resolved.registry, join(home, 'new', 'index.jsonl'))
+  assert.equal(resolved.deleted, join(home, 'new', 'deleted.jsonl'))
+
+  // ② 环境变量 dir 同理
+  const viaEnv = resolveOptions({}, { DSH_HOME: home, DSH_OUTCOMES_DIR: join(home, 'env') }, { settings })
+  assert.equal(viaEnv.registry, join(home, 'env', 'index.jsonl'))
+  assert.equal(viaEnv.deleted, join(home, 'env', 'deleted.jsonl'))
+
+  // ③ 显式 registry/deleted 仍然最高优先
+  const explicit = resolveOptions({ dir: join(home, 'new'), registry: join(home, 'r.jsonl'), deleted: join(home, 'd.jsonl') }, { DSH_HOME: home }, { settings })
+  assert.equal(explicit.registry, join(home, 'r.jsonl'))
+  assert.equal(explicit.deleted, join(home, 'd.jsonl'))
+})
+
 test('数值项：非法值回落默认，不产生 NaN', () => {
   const home = fakeHome()
   for (const bad of ['abc', -5, 0, null]) {

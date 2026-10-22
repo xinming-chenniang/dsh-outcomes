@@ -3,14 +3,17 @@
   "version": "0.1.0",
   "description": "DSH 成果管理器：把最终成果（报告 / 网页 / 文档 / 表格 / 图片 / 数据表）登记成一份可检索、可预览、可回收的清单 —— agent 登记、人看图、脚本能查。 | DSH outcomes manager: register deliverables (reports, pages, docs, sheets, images, datasets) into one searchable, previewable, recoverable registry — agents register, humans browse, scripts query.",
   "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/284022719/dsh-outcomes.git"
+    "url": "git+https://github.com/xinming-chenniang/dsh-outcomes.git"
   },
   "bugs": {
-    "url": "https://github.com/284022719/dsh-outcomes/issues"
+    "url": "https://github.com/xinming-chenniang/dsh-outcomes/issues"
   },
-  "homepage": "https://github.com/284022719/dsh-outcomes#readme",
+  "homepage": "https://github.com/xinming-chenniang/dsh-outcomes#readme",
   "keywords": [
     "dsh",
     "dsh-plugin",

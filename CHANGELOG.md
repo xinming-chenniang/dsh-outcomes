@@ -2,6 +2,16 @@
 
 > 按版本记录"改了什么、为什么、怎么验证的"。当前用法看 [README.md](README.md)。
 
+## 2026-10-22 · 显式 `dir` 不再被设置文件的 `registry` 拽回
+
+- 现象：`config.dir`（或 `DSH_OUTCOMES_DIR`）单独给定时，`dir` 解析正确，但 `registry` / `deleted`
+  仍取用户设置文件里的旧值 —— 测试用临时目录，清单却写进真实清单，
+  `host.test.mjs` 因此在"list 应只有 1 条"上读到 67 条（`npm test` 长期红在这里）。
+- 修法：`resolveOptions()` 里显式 `dir` 优先于设置文件的 `registry` / `deleted`；
+  显式的 `config.registry` / `config.deleted` 仍最高优先。
+- 验证：`test/paths.test.mjs` 新增 1 条（config.dir / env dir / 显式 registry 三种）；
+  `node --test` → `tests 96 / pass 96 / fail 0`；`npm run preflight` 通过。
+
 ## 2026-10-21 · Node 24 下的 `npm test`
 
 - 现象：`npm test` 用的是 `node --test test/`，在当前 Node 24 上直接 `Cannot find module '...\test'`（0 pass / 1 fail）。
