@@ -200,6 +200,13 @@ dsh-outcomes dir          # 打印当前生效的数据目录（脚本用）
   先看 `dsh.client` 的 `id` 是否等于包名 —— 见 [`docs/CLIENT-HALF.md`](docs/CLIENT-HALF.md)。
 - **DSH 版本**：`engines.dsh >= 0.2.0-rc.2`（按该版本的客户端装配契约写的）。
 
+## 卸载
+
+- 插件管理器 → remove → **重启 DSH**；
+- 或从 profile 的 `dependencies` 与 `dsh.profile.bundles` 删掉 `dsh-outcomes`、删 `node_modules` 里的 junction，重启；
+- 清单数据**不会自动删除**：在配置的 `dir`（默认 `$DSH_HOME/plugin-data/dsh-outcomes`，可被设置文件覆盖）里，
+  先备份再处理。CLI 与插件共用这份数据。
+
 ## 开发
 
 ```bash
