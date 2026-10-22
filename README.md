@@ -182,6 +182,13 @@ dsh-outcomes dir          # 打印当前生效的数据目录（脚本用）
 **出问题了**（设置里没有这一节 / 页面 404 / 说没有 `outcome_add` / 清单写到别处 / 自动化里取消失败…）：
 见 [`docs/TROUBLESHOOTING.md`](docs/TROUBLESHOOTING.md) —— 按**症状**查，每条都写清原因与判据。
 
+## 兼容性
+
+| DSH 版本 | 结果 |
+|---|---|
+| `0.2.1-rc.2` | 已测：插件 active，`/__dsh-outcomes/api/status` 返回 200；`node --test` 96/96 |
+| 其他版本 | 未测；`package.json` 只声明 `engines.dsh >= 0.2.0-rc.2` |
+
 ## 已知限制
 
 - **非交互（headless / 自动化）里无法"取消登记"**：`outcome_remove` 挂在宿主的审批闸门上，
