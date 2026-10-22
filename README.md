@@ -77,7 +77,7 @@ CLI 与插件共用同一份清单格式与同一个默认目录，所以两种�
 | `deleted` | `<dir>/deleted.jsonl` | 删除日志 |
 | `maxTitleLength` | `120` | 标题超长会被截断 |
 | `pageSize` | `200` | 管理页的默认窗口（`/api/list` 不传 `limit` 时给这么多；显式 `limit` 也尊重，硬上限 10000）。**在页面搜索框里输入会带 `q` 重新查服务端**，所以能搜到窗口之外的条目 |
-| `allowOutsideCwd` | `true` | 是否允许登记会话 cwd 以外的路径 |
+| `allowOutsideCwd` | `true` | 是否允许登记会话 cwd 以外的路径。设为 `false` 时 `add` / `update` 换路径会以 `outside-cwd` 拒收（2026-10-18 起真正生效，此前只解析不执行） |
 | `treatSystemTempAsWarning` | `true` | 路径落在系统临时目录时给警告（那些文件随时会被清掉） |
 
 - 环境变量：`DSH_HOME`（DSH 家目录，默认 `~/.dsh`）、`DSH_OUTCOMES_DIR`（覆盖 `dir`）。

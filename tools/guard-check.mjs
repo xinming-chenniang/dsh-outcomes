@@ -10,7 +10,7 @@
  *
  * 判据：每个变体都必须被**至少一个**守卫抓住。抓不住的会以 `✗ 漏网` 列出，退出码 1。
  */
-import { cpSync, existsSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
+import { cpSync, existsSync, readFileSync, rmSync, writeFileSync, writeSync } from 'node:fs'
 import { spawnSync } from 'node:child_process'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -74,6 +74,28 @@ cpSync(ROOT, WORK, { recursive: true, filter: (src) => !/node_modules|\.git$/.te
 
 function run(command, argv) {
   return spawnSync(command, argv, { cwd: WORK, encoding: 'utf8', timeout: 300000, stdio: ['ignore', 'pipe', 'pipe'] })
+}
+
+// ---------------------------------------------------------------- 基线
+// 未改动的副本必须**自己先绿**。否则下面每个变体都会"被抓住"——那不是守卫在叫，
+// 而是**测试入口本身坏了**（2026-10-18 补：本页实测 `package.json` 的
+// `node --test test/` 在 Node 24 上直接报 MODULE_NOT_FOUND，那种情形下
+// "变体全部被抓住"是假绿，且看不出问题）。
+const baselineTests = run(process.execPath, ['--test'])
+const baselineCheck = run(process.execPath, ['tools/check.mjs'])
+if (baselineTests.status !== 0 || baselineCheck.status !== 0) {
+  rmSync(WORK, { recursive: true, force: true })
+  writeSync(1, [
+    '',
+    '守卫体检：基线不绿，结论无效',
+    '',
+    `  node --test        exit ${baselineTests.status}`,
+    `  tools/check.mjs    exit ${baselineCheck.status}`,
+    '',
+    '先把基线修绿再跑本脚本；否则"变体全部被抓住"只证明测试入口坏了，不证明守卫有效。',
+    '',
+  ].join('\n'))
+  process.exit(2)
 }
 
 const results = []

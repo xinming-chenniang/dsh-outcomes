@@ -3,7 +3,7 @@
 零依赖、无构建步骤：克隆下来就能跑。需要 **Node ≥ 20**（用 `node --test`，不装测试框架）。
 
 ```bash
-npm test        # 85 条：store / paths / host / page / client / e2e / import / shipped / docs
+npm test        # 95 条：store / paths / host / page / client / e2e / import / shipped / docs
 npm run check   # 逐文件语法 + CLI 冒烟 + 泄漏扫描
 npm run preflight   # 上面两条 + 打包清单，退出码即结论
 ```
@@ -20,6 +20,8 @@ npm run preflight   # 上面两条 + 打包清单，退出码即结论
 6. **动过任何守卫或扫描规则** → 跑 `npm run guards`：它把包**故意改坏**（7 个变体，都在临时副本上），
    看守卫会不会叫。第 24 轮的教训是"扫描器报干净，但规则本身有盲区" ——
    **"检查通过"只有在"检查能失败"的前提下才有意义**。
+   它**先验基线**：未改动的副本自己不绿就 `exit 2`（"基线不绿，结论无效"），
+   而不是把 7 个变体全算成"被抓住"（那是假绿，2026-10-18 补）。
 
 ## 这套测试防的是什么
 

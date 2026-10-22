@@ -75,7 +75,7 @@ Restart DSH after changing it (the plugin resolves config once, at load time).
 | `deleted` | `<dir>/deleted.jsonl` | deleted log |
 | `maxTitleLength` | `120` | titles are truncated beyond this |
 | `pageSize` | `200` | the manager page's default window (`/api/list` returns this many when no `limit` is given; an explicit `limit` is honoured up to a hard cap of 10000). Typing in the page's search box re-queries the server with `q`, so matches outside the window are still found |
-| `allowOutsideCwd` | `true` | allow registering paths outside the session cwd |
+| `allowOutsideCwd` | `true` | allow registering paths outside the session cwd. When `false`, `add` / `update` reject with `outside-cwd` (enforced since 2026-10-18; it used to be parsed but never applied) |
 | `treatSystemTempAsWarning` | `true` | warn when a path lives in the system temp dir (those files get cleaned up) |
 
 - Environment: `DSH_HOME` (DSH home, default `~/.dsh`), `DSH_OUTCOMES_DIR` (overrides `dir`).

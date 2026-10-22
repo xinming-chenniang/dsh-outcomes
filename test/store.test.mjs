@@ -83,6 +83,52 @@ test('add：系统临时目录下的路径会给警告（开关打开时）', ()
   assert.ok(root.length > 0)
 })
 
+test('add：allowOutsideCwd 默认 true —— cwd 之外的路径照收', () => {
+  const { root, files, store } = fixture()
+  const outside = join(root, 'elsewhere.html')
+  writeFileSync(outside, 'x')
+  const result = store.add({ title: 'outside', paths: outside })
+  assert.equal(result.ok, true)
+  assert.deepEqual(result.entry.paths, [outside])
+  assert.ok(files.length > 0)
+})
+
+test('add/update：allowOutsideCwd=false 时拒收 cwd 之外的路径（该配置此前只解析、从未生效）', () => {
+  const root = mkdtempSync(join(tmpdir(), 'dsh-outcomes-'))
+  const files = join(root, 'files')
+  const outsideDir = join(root, 'outside')
+  mkdirSync(files, { recursive: true })
+  mkdirSync(outsideDir, { recursive: true })
+  const insideFile = join(files, 'in.html')
+  const outsideFile = join(outsideDir, 'out.html')
+  writeFileSync(insideFile, 'x')
+  writeFileSync(outsideFile, 'x')
+  const store = createStore({
+    dir: join(root, 'data'), cwd: files, env: {},
+    allowOutsideCwd: false, treatSystemTempAsWarning: false,
+  })
+
+  const accepted = store.add({ title: 'in', paths: 'in.html' })
+  assert.equal(accepted.ok, true)
+  assert.deepEqual(accepted.entry.paths, [insideFile])
+
+  const rejected = store.add({ title: 'out', paths: outsideFile })
+  assert.equal(rejected.ok, false)
+  assert.equal(rejected.error, 'outside-cwd')
+  assert.deepEqual(rejected.outside, [outsideFile])
+
+  // `../` 逃逸同样被拦：相对路径先按 cwd 解析，再判是否在 cwd 之内
+  const escape = store.add({ title: 'escape', paths: '../outside/out.html' })
+  assert.equal(escape.ok, false)
+  assert.equal(escape.error, 'outside-cwd')
+
+  // update 换路径受同一条约束，且失败时不落盘
+  const updated = store.update(accepted.entry.id, { paths: outsideFile })
+  assert.equal(updated.ok, false)
+  assert.equal(updated.error, 'outside-cwd')
+  assert.equal(readRegistry(store.registry).length, 1)
+})
+
 test('add：id 同秒不重复（随机后缀兜底）', () => {
   const { files, store } = fixture()
   writeFileSync(join(files, 'a.html'), 'x')
