@@ -4,7 +4,7 @@
 
 > 把「最终成果」变成一等公民：**agent 登记，人看图，脚本能查**。
 >
-> A deliverables registry for [DeepSeek Harness](https://github.com/deepseek-ai): agents register final
+> A deliverables registry for [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness): agents register final
 > artifacts, humans browse them in-app, scripts query them.
 
 干活的产物（报告、网页、文档、表格、图片、数据表）通常散在几十个目录里，三天后谁也记不住哪个是定稿。
@@ -190,7 +190,7 @@ dsh-outcomes dir          # 打印当前生效的数据目录（脚本用）
 
 | DSH 版本 | 结果 |
 |---|---|
-| `0.2.1-rc.2` | 已测：插件 active，`/__dsh-outcomes/api/status` 返回 200；`node --test` 96/96 |
+| `0.2.1-rc.2` | 已测：插件 active，`/__dsh-outcomes/api/status` 返回 200；`node --test` 99/99 |
 | 其他版本 | 未测；`package.json` 只声明 `engines.dsh >= 0.2.0-rc.2` |
 
 ## 已知限制
