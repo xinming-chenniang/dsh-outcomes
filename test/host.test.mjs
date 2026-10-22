@@ -34,13 +34,14 @@ function harness() {
 }
 
 /** 最小 req/res 桩：够跑 `new URL(req.url, ...)`、读 body、以及 res.writeHead/end。 */
-function call(route, { method = 'GET', url = '/', headers = {}, body } = {}) {
+function call(route, { method = 'GET', url = '/', headers = {}, body, remoteAddress = '127.0.0.1' } = {}) {
   return new Promise((resolve) => {
     const chunks = []
     const req = {
       method,
       url: ROUTE_PREFIX + url,
       headers,
+      socket: { remoteAddress },
       on(event, handler) {
         if (event === 'data' && body !== undefined) handler(Buffer.from(typeof body === 'string' ? body : JSON.stringify(body)))
         if (event === 'end') handler()
@@ -66,6 +67,29 @@ test('插件导出契约：name / inject / apply，并按前缀注册路由', ()
   assert.equal(route.kind, 'prefix')
   assert.equal(route.path, ROUTE_PREFIX)
   assert.equal(typeof route.handler, 'function')
+})
+
+test('非 loopback 请求一律 403（宿主前缀路由不过 Web 登录鉴权）', async () => {
+  const { route } = harness()
+  const res = await call(route, { url: '/api/status', remoteAddress: '10.1.2.3' })
+  assert.equal(res.status, 403)
+  assert.match(res.body, /loopback-only/)
+})
+
+test('跨源请求 403；同源请求放行', async () => {
+  const { route } = harness()
+  const bad = await call(route, {
+    url: '/api/status',
+    headers: { host: '127.0.0.1:50510', origin: 'http://evil.example' },
+  })
+  assert.equal(bad.status, 403)
+  assert.match(bad.body, /cross-origin/)
+
+  const ok = await call(route, {
+    url: '/api/status',
+    headers: { host: '127.0.0.1:50510', origin: 'http://127.0.0.1:50510' },
+  })
+  assert.equal(ok.status, 200)
 })
 
 test('GET / 返回自包含页面（含 CSP 与守卫头名，不外链任何资源）', async () => {
@@ -143,7 +167,7 @@ test('文件路由：URL 里只有 id 与序号；越界 / 未知 id / 穿越一
 
   // 正常：HTML 以内联方式给出，并带沙箱 CSP
   const ok = await new Promise((resolve) => {
-    const req = { method: 'GET', url: `${ROUTE_PREFIX}/file/${id}/0`, headers: {}, on() { return req }, destroy() {} }
+    const req = { method: 'GET', url: `${ROUTE_PREFIX}/file/${id}/0`, headers: {}, socket: { remoteAddress: '127.0.0.1' }, on() { return req }, destroy() {} }
     const res = {
       status: 0, headers: null,
       writeHead(status, headers) { this.status = status; this.headers = headers },

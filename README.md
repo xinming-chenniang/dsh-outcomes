@@ -1,6 +1,6 @@
 # dsh-outcomes —— DSH 成果管理器
 
-> 当前版本：`0.1.1`（2026-10-22）
+> 当前版本：`0.1.2`（2026-10-23）
 
 > 把「最终成果」变成一等公民：**agent 登记，人看图，脚本能查**。
 >
@@ -39,25 +39,26 @@
 
 ### 方式一：npm / 插件管理器（推荐）
 
-npm 已发布 `dsh-outcomes@0.1.1`；装 bundle 后重启 DSH（bundle 只在启动时装载）：
+npm 已发布 `dsh-outcomes@0.1.2`；桌面端走 **设置 → 插件 → 添加插件**（输入 `dsh-outcomes`），
+CLI 用下面的命令，装完重启 DSH（bundle 只在启动时装载）：
 
 ```
-dsh plugin add dsh-outcomes
+dsh plugin --profile <profile> add dsh-outcomes
 ```
 
 ### 方式二：GitHub 源
 
 ```
-dsh plugin add github:xinming-chenniang/dsh-outcomes
+dsh plugin --profile <profile> add github:xinming-chenniang/dsh-outcomes
 ```
 
-也可以把 Release 资产 `dsh-outcomes-0.1.1.tgz` 交给插件管理器安装。
+也可以把 Release 资产 `dsh-outcomes-0.1.2.tgz` 交给插件管理器安装。
 
 或把包名加进 profile 的 `package.json`：
 
 ```json
 {
-  "dependencies": { "dsh-outcomes": "^0.1.0" },
+  "dependencies": { "dsh-outcomes": "^0.1.2" },
   "dsh": { "profile": { "bundles": ["@deepseek-ai/dsh-base", "@deepseek-ai/dsh-web-app", "dsh-outcomes"] } }
 }
 ```

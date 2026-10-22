@@ -2,12 +2,22 @@
 
 > 按版本记录"改了什么、为什么、怎么验证的"。当前用法看 [README.md](README.md)。
 
+## 0.1.2 — 2026-10-23
+
+- security: `/__dsh-outcomes` 路由加 **loopback + Origin 守卫**；此前该前缀路由不走 Web UI 登录鉴权，
+  `dsh web` 一旦绑到局域网/隧道，远端可读已登记文件。
+- fix: 文件路由**先 open 成功再 writeHead**，并监听 ReadStream 的 `error`；避免 `statSync` 与
+  `createReadStream` 之间文件消失时未捕获异常带走宿主进程。
+- fix: 管理页里的 `registry` / `deletedFile` / `dir` 做 HTML 转义（路径含标签/引号时不再注入）。
+- fix: 重写临时文件改为 `pid + 时间 + 随机` 唯一名，降低两个进程同时写同一个 `.tmp` 的碰撞。
+- 验证：`node --test` → 99/99（新增 loopback/跨源/页面转义 3 条）；e2e 仍全过。
+
 ## 0.1.1 — 2026-10-22
 
-- fix(pkg): `bin` 从对象改为字符串 `bin/dsh-outcomes.mjs`；npm 11 在 0.1.0 发布时把
-  `bin[dsh-outcomes]` 判为 invalid 并自动删除，导致 CLI 不会安装。0.1.1 重新发布。
-- 0.1.0 在 npm 上只留下 staged 占位（`0.0.0-stage`），未 live；0.1.1 是首个正式可安装版本。
-- 验证：`npm pack --dry-run` 不再有 bin warning；`node --test` 96/96。
+- fix(pkg): `bin` 从 `./bin/dsh-outcomes.mjs` 规范为 `bin/dsh-outcomes.mjs`；npm 11 的
+  “invalid bin” warning 是误报，0.1.0 的 tarball 实际带 `bin` 且可安装。
+- 0.1.0 已在 npm live；0.1.1 是后续修复版，不是“首个可安装版本”。
+- 验证：`npm pack --dry-run` 无 warning；`node --test` 96/96。
 
 ## 2026-10-22 · 显式 `dir` 不再被设置文件的 `registry` 拽回
 

@@ -35,17 +35,15 @@ Both shots are taken from a **running instance** by `node tools/screenshots.mjs`
 
 ### Option 1 — DSH plugin manager (recommended)
 
-Install the bundle, then **restart DSH** (bundles are loaded at startup):
-
-```
-dsh plugin add dsh-outcomes
-```
+Install the bundle, then **restart DSH** (bundles are loaded at startup).
+Desktop: **Settings → Plugins → Add plugin** → `dsh-outcomes`.
+CLI: `dsh plugin --profile <profile> add dsh-outcomes`.
 
 Or add it to your profile `package.json` by hand:
 
 ```json
 {
-  "dependencies": { "dsh-outcomes": "^0.1.0" },
+  "dependencies": { "dsh-outcomes": "^0.1.2" },
   "dsh": { "profile": { "bundles": ["@deepseek-ai/dsh-base", "@deepseek-ai/dsh-web-app", "dsh-outcomes"] } }
 }
 ```

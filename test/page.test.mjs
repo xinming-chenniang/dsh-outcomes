@@ -37,6 +37,18 @@ test('渲染后不留任何未替换的占位符（写错 token 名就是空白�
   }
 })
 
+test('页面里的路径做 HTML 转义', () => {
+  const html = render({
+    dir: '<img src=x onerror=alert(1)>',
+    registry: 'a&b',
+    deletedFile: '<script>',
+  })
+  assert.ok(!html.includes('<img src=x'), '路径里的标签不应原样进入 HTML')
+  assert.match(html, /&lt;img src=x/)
+  assert.ok(html.includes('a&amp;b'), '& 应当转义')
+  assert.ok(html.includes('&lt;script&gt;'), '<script> 应当转义')
+})
+
 test('内联脚本是合法 JS，而且真的带上了 pageSize 与守卫头', () => {
   const html = render({ pageSize: 250 })
   const match = /<script>([\s\S]*?)<\/script>/.exec(html)
