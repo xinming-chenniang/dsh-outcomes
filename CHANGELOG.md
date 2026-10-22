@@ -11,6 +11,8 @@
   显式的 `config.registry` / `config.deleted` 仍最高优先。
 - 验证：`test/paths.test.mjs` 新增 1 条（config.dir / env dir / 显式 registry 三种）；
   `node --test` → `tests 96 / pass 96 / fail 0`；`npm run preflight` 通过。
+- CI：`test/paths.test.mjs` 的 `DSH_HOME` 用例不再写死 `C:\tmp\x`（POSIX 上会被当相对路径），
+  Ubuntu 腿恢复全绿。
 
 ## 2026-10-21 · Node 24 下的 `npm test`
 

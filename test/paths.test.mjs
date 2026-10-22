@@ -21,7 +21,9 @@ function fakeHome() {
 }
 
 test('DSH_HOME：有就用它，没有回落到 ~/.dsh', () => {
-  assert.equal(dshHome({ DSH_HOME: 'C:\\tmp\\x' }), 'C:\\tmp\\x')
+  // 用本平台绝对路径：`C:\tmp\x` 在 POSIX 上会被当成相对路径（CI 的 Ubuntu 腿就栽在这里）
+  const custom = join(homedir(), 'custom-dsh-home')
+  assert.equal(dshHome({ DSH_HOME: custom }), custom)
   assert.equal(dshHome({}), join(homedir(), '.dsh'))
   assert.equal(dshHome({ DSH_HOME: '   ' }), join(homedir(), '.dsh'))
 })
