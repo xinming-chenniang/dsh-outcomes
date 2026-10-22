@@ -3,11 +3,16 @@
 > 目标：**别人拿到包能装上、能用、并且看得出它会碰什么**。npm 发布是可选的最后一步；
 > 主路径是 GitHub（社区清单靠 topic 与 `dsh-plugin` 关键字收录）。
 
-## 0. 前置事实（写这份文档时的状态，别当已完成）
+## 0. 发布状态（2026-10-22）
 
-- 本仓库**还不是 git 仓库**，GitHub 上也**还没有**这个仓库 —— 下面的 `git init` / `gh repo create` 是待做动作。
-- npm 上**还没有**发布过这个包。
-- **真机装载验收未做**（见第 4 步）：需要在一台装着 DSH 的机器上重启验证。
+- **GitHub 已发布**：<https://github.com/xinming-chenniang/dsh-outcomes>（public，`main` + tag `v0.1.0`
+  + Release 资产 `dsh-outcomes-0.1.0.tgz`）。下面的 `git init` / `gh repo create` 是当时的动作记录。
+- **npm 未发布**：`npm whoami --registry=https://registry.npmjs.org` 返回 **401**（本机 token 失效），
+  先 `npm login` 再走第 7 步；`npm publish --dry-run` 已通过（32 文件 / 218.7 kB）。
+- **真机装载验收**：本机 desktop profile 以 `link:` 装载并日常使用；隔离 `--from-pack` 验收**尚未重跑**
+  （发布后补，见第 4 步）。
+- **社区收录**：仓库已加 `dsh-plugin` / `deepseek-harness` topic；awesome 清单 PR 需等仓库满 1 天
+  （2026-10-23 20:31 北京时间后）。
 
 ## 1. 版本与变更记录
 
