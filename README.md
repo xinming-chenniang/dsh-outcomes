@@ -35,13 +35,19 @@
 
 ## 安装
 
-### 方式一：DSH 插件管理器（推荐）
+### 方式一：GitHub 源（当前可用）
 
-在 DSH 里装这个 bundle，然后**重启 DSH**（bundle 只在启动时装载）：
+npm 包尚未发布（本机 token 待登录）；现在直接装 GitHub 源，重启 DSH（bundle 只在启动时装载）：
 
 ```
-dsh plugin add dsh-outcomes
+dsh plugin add github:xinming-chenniang/dsh-outcomes
 ```
+
+也可以把 Release 资产 `dsh-outcomes-0.1.0.tgz` 交给插件管理器安装。
+
+### 方式二：npm / 插件管理器（npm 发布后）
+
+`dsh plugin add dsh-outcomes` 只有在 npm 包发布后才可用；当前请用上面的 GitHub 源。
 
 或把包名加进 profile 的 `package.json`：
 
@@ -55,13 +61,16 @@ dsh plugin add dsh-outcomes
 > **关键**：装进 `dependencies` 只是下载；**只有列进 `dsh.profile.bundles` 才会被装载**。
 > 这是宿主唯一的开关，忘了它 = 装了但什么都没发生（而且不报错）。
 
-### 方式二：只当 CLI 用
+### 方式三：只当 CLI 用
+
+npm 尚未发布时，从仓库源码跑：
 
 ```bash
-npm i -g dsh-outcomes        # 或 npx dsh-outcomes …
-dsh-outcomes add --title "季度报告" --paths "D:/reports/q3.html;D:/reports/q3.csv"
-dsh-outcomes list
+node bin/dsh-outcomes.mjs add --title "季度报告" --paths "D:/reports/q3.html;D:/reports/q3.csv"
+node bin/dsh-outcomes.mjs list
 ```
+
+npm 发布后才可用 `npm i -g dsh-outcomes` / `npx dsh-outcomes …`。
 
 CLI 与插件共用同一份清单格式与同一个默认目录，所以两种用法可以混着来。
 
