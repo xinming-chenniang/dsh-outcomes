@@ -6,7 +6,8 @@
 ## 0. 发布状态（2026-10-22）
 
 - **GitHub 已发布**：<https://github.com/xinming-chenniang/dsh-outcomes>（public，`main` + tag `v0.1.0`
-  + Release 资产 `dsh-outcomes-0.1.0.tgz`）。下面的 `git init` / `gh repo create` 是当时的动作记录。
+  + Release 资产 `dsh-outcomes-0.1.0.tgz`；**`v0.1.1` + Release 资产 `dsh-outcomes-0.1.1.tgz`** 是 npm 修复版）。
+  下面的 `git init` / `gh repo create` 是当时的动作记录。
 - **npm 已发布**：`dsh-outcomes@0.1.1` 是 `latest`（CLI `bin` 已确认在 tarball 里）；`0.1.0` 也在
   versions 里。`npm whoami --registry=https://registry.npmjs.org` = `xinming-chenniang`。
 - **真机装载验收**：本机 desktop profile 以 `link:` 装载并日常使用；隔离 `--from-pack` 验收**尚未重跑**
