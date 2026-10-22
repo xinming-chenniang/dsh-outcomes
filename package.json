@@ -1,6 +1,6 @@
 {
   "name": "dsh-outcomes",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "DSH 成果管理器：把最终成果（报告 / 网页 / 文档 / 表格 / 图片 / 数据表）登记成一份可检索、可预览、可回收的清单 —— agent 登记、人看图、脚本能查。 | DSH outcomes manager: register deliverables (reports, pages, docs, sheets, images, datasets) into one searchable, previewable, recoverable registry — agents register, humans browse, scripts query.",
   "license": "MIT",
   "publishConfig": {
@@ -36,7 +36,7 @@
     "./web": "./lib/index.js"
   },
   "bin": {
-    "dsh-outcomes": "./bin/dsh-outcomes.mjs"
+    "dsh-outcomes": "bin/dsh-outcomes.mjs"
   },
   "files": [
     "lib",

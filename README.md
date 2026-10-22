@@ -1,5 +1,7 @@
 # dsh-outcomes —— DSH 成果管理器
 
+> 当前版本：`0.1.1`（2026-10-22）
+
 > 把「最终成果」变成一等公民：**agent 登记，人看图，脚本能查**。
 >
 > A deliverables registry for [DeepSeek Harness](https://github.com/deepseek-ai): agents register final
@@ -35,19 +37,21 @@
 
 ## 安装
 
-### 方式一：GitHub 源（当前可用）
+### 方式一：npm / 插件管理器（推荐）
 
-npm 包尚未发布（本机 token 待登录）；现在直接装 GitHub 源，重启 DSH（bundle 只在启动时装载）：
+npm 已发布 `dsh-outcomes@0.1.1`；装 bundle 后重启 DSH（bundle 只在启动时装载）：
+
+```
+dsh plugin add dsh-outcomes
+```
+
+### 方式二：GitHub 源
 
 ```
 dsh plugin add github:xinming-chenniang/dsh-outcomes
 ```
 
-也可以把 Release 资产 `dsh-outcomes-0.1.0.tgz` 交给插件管理器安装。
-
-### 方式二：npm / 插件管理器（npm 发布后）
-
-`dsh plugin add dsh-outcomes` 只有在 npm 包发布后才可用；当前请用上面的 GitHub 源。
+也可以把 Release 资产 `dsh-outcomes-0.1.1.tgz` 交给插件管理器安装。
 
 或把包名加进 profile 的 `package.json`：
 
@@ -63,14 +67,13 @@ dsh plugin add github:xinming-chenniang/dsh-outcomes
 
 ### 方式三：只当 CLI 用
 
-npm 尚未发布时，从仓库源码跑：
-
 ```bash
-node bin/dsh-outcomes.mjs add --title "季度报告" --paths "D:/reports/q3.html;D:/reports/q3.csv"
-node bin/dsh-outcomes.mjs list
+npm i -g dsh-outcomes        # 或 npx dsh-outcomes …
+dsh-outcomes add --title "季度报告" --paths "D:/reports/q3.html;D:/reports/q3.csv"
+dsh-outcomes list
 ```
 
-npm 发布后才可用 `npm i -g dsh-outcomes` / `npx dsh-outcomes …`。
+也可以从仓库源码跑 `node bin/dsh-outcomes.mjs …`。
 
 CLI 与插件共用同一份清单格式与同一个默认目录，所以两种用法可以混着来。
 

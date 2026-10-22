@@ -2,6 +2,13 @@
 
 > 按版本记录"改了什么、为什么、怎么验证的"。当前用法看 [README.md](README.md)。
 
+## 0.1.1 — 2026-10-22
+
+- fix(pkg): `bin` 从对象改为字符串 `bin/dsh-outcomes.mjs`；npm 11 在 0.1.0 发布时把
+  `bin[dsh-outcomes]` 判为 invalid 并自动删除，导致 CLI 不会安装。0.1.1 重新发布。
+- 0.1.0 在 npm 上只留下 staged 占位（`0.0.0-stage`），未 live；0.1.1 是首个正式可安装版本。
+- 验证：`npm pack --dry-run` 不再有 bin warning；`node --test` 96/96。
+
 ## 2026-10-22 · 显式 `dir` 不再被设置文件的 `registry` 拽回
 
 - 现象：`config.dir`（或 `DSH_OUTCOMES_DIR`）单独给定时，`dir` 解析正确，但 `registry` / `deleted`

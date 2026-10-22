@@ -7,8 +7,8 @@
 
 - **GitHub 已发布**：<https://github.com/xinming-chenniang/dsh-outcomes>（public，`main` + tag `v0.1.0`
   + Release 资产 `dsh-outcomes-0.1.0.tgz`）。下面的 `git init` / `gh repo create` 是当时的动作记录。
-- **npm 未发布**：`npm whoami --registry=https://registry.npmjs.org` 返回 **401**（本机 token 失效），
-  先 `npm login` 再走第 7 步；`npm publish --dry-run` 已通过（32 文件 / 218.7 kB）。
+- **npm 已发布**：`dsh-outcomes@0.1.1` 是 `latest`（CLI `bin` 已确认在 tarball 里）；`0.1.0` 也在
+  versions 里。`npm whoami --registry=https://registry.npmjs.org` = `xinming-chenniang`。
 - **真机装载验收**：本机 desktop profile 以 `link:` 装载并日常使用；隔离 `--from-pack` 验收**尚未重跑**
   （发布后补，见第 4 步）。
 - **社区收录**：仓库已加 `dsh-plugin` / `deepseek-harness` topic；awesome 清单 PR 需等仓库满 1 天
