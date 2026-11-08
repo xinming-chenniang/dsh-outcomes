@@ -8,7 +8,10 @@
   工具层解构后变成嵌套 `undefined`，被 DSH 宿主的无损 JSON 校验打回
   （`tool "outcome_list" returned invalid output: value is not lossless JSON`）—— 默认查询覆盖全量清单，**每次必挂**。
   修法只在工具层兜底（`jsonSafe()`：`undefined` → `null`，非有限数 → `null`），不改清单文件本身。
-- 验证：`node --test` → 100/100（新增「工具返回值无损」1 条，夹具含一条无 `sessionId` 的旧行）；
+- change: `outcome_list` 默认窗口 **20 行**（显式 `limit` 封顶 200），返回值新增 `total`。
+  此前不传 `limit` 会整份返回 —— 本机 246 条约 **8.6 万 token**，一次调用就能吃掉大半个上下文窗口。
+  页面 `/api/list` 的独立窗口（`pageSize=200`）不受影响。
+- 验证：`node --test` → 101/101（新增「工具返回值无损」「默认窗口 20」2 条，夹具含一条无 `sessionId` 的旧行）；
   真实清单（246 条）端到端跑 `outcome_list` → 无损校验 PASS，184 条缺字段补成 `null`。
 
 ## 0.1.2 — 2026-10-23

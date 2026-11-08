@@ -430,6 +430,30 @@ test('工具返回值无损：清单里缺 sessionId 的老行不能再让 outco
   assertLossless(await restore.execute({ id: '20260101-000000-aaaa' }, exec), 'outcome_restore')
 })
 
+test('outcome_list 默认窗口 20、显式 limit 封顶 200：不把整份清单倒进上下文', async () => {
+  const { tools, files, store } = harness()
+  for (let i = 0; i < 25; i += 1) {
+    assert.equal(store.add({ title: `entry ${i}`, paths: [join(files, 'report.html')] }).ok, true)
+  }
+  const list = tools.find((tool) => tool.name === 'outcome_list')
+
+  const dflt = await list.execute({}, {})
+  assert.equal(dflt.count, 20, '默认只给 20 行')
+  assert.equal(dflt.total, 25, 'total 报告全量条数，agent 才知道还有更多')
+  assert.equal(dflt.limit, 20)
+  assertLossless(dflt, 'outcome_list(default)')
+
+  const explicit = await list.execute({ limit: 5 }, {})
+  assert.equal(explicit.count, 5)
+
+  const capped = await list.execute({ limit: 9999 }, {})
+  assert.equal(capped.limit, 200, '硬上限 200（全量 246 条约 8.6 万 token）')
+  assert.equal(capped.count, 25)
+
+  const junk = await list.execute({ limit: 'abc' }, {})
+  assert.equal(junk.limit, 20, '垃圾 limit 不该变成 NaN / 0 / 全量')
+})
+
 test('宿主没有 tools 服务时：只注册路由，不抛错', () => {
   const root = mkdtempSync(join(tmpdir(), 'dsh-outcomes-notools-'))
   const routes = []
