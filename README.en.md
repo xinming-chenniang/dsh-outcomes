@@ -43,7 +43,7 @@ Or add it to your profile `package.json` by hand:
 
 ```json
 {
-  "dependencies": { "dsh-outcomes": "^0.1.2" },
+  "dependencies": { "dsh-outcomes": "^0.1.3" },
   "dsh": { "profile": { "bundles": ["@deepseek-ai/dsh-base", "@deepseek-ai/dsh-web-app", "dsh-outcomes"] } }
 }
 ```
