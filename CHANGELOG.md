@@ -2,6 +2,15 @@
 
 > 按版本记录"改了什么、为什么、怎么验证的"。当前用法看 [README.md](README.md)。
 
+## 未发布
+
+- fix: 工具返回值缺字段补 `null`。清单里 CLI 时代写入的行没有 `sessionId` 字段（该字段是后加的可选元数据），
+  工具层解构后变成嵌套 `undefined`，被 DSH 宿主的无损 JSON 校验打回
+  （`tool "outcome_list" returned invalid output: value is not lossless JSON`）—— 默认查询覆盖全量清单，**每次必挂**。
+  修法只在工具层兜底（`jsonSafe()`：`undefined` → `null`，非有限数 → `null`），不改清单文件本身。
+- 验证：`node --test` → 100/100（新增「工具返回值无损」1 条，夹具含一条无 `sessionId` 的旧行）；
+  真实清单（246 条）端到端跑 `outcome_list` → 无损校验 PASS，184 条缺字段补成 `null`。
+
 ## 0.1.2 — 2026-10-23
 
 - security: `/__dsh-outcomes` 路由加 **loopback + Origin 守卫**；此前该前缀路由不走 Web UI 登录鉴权，

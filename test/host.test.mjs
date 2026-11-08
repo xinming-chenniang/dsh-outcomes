@@ -378,6 +378,58 @@ test('contextOf：取得到就取，取不到不抛错', () => {
   assert.deepEqual(contextOf(undefined), { sessionId: '', cwd: '' })
 })
 
+/**
+ * 宿主的无损 JSON 校验：嵌套 undefined / NaN / Infinity 一律拒绝
+ * （`tool "outcome_list" returned invalid output: value is not lossless JSON`，2026-11-09 实测）。
+ */
+function assertLossless(value, path = '$') {
+  if (value === null || typeof value === 'string' || typeof value === 'boolean') return
+  if (typeof value === 'number') {
+    assert.ok(Number.isFinite(value), `${path} 是 NaN/Infinity，宿主会拒绝`)
+    return
+  }
+  assert.equal(typeof value, 'object', `${path} 不是 JSON 值`)
+  for (const [key, item] of Object.entries(value)) {
+    assert.notEqual(item, undefined, `${path}.${key} 是 undefined，宿主会拒绝`)
+    assertLossless(item, `${path}.${key}`)
+  }
+}
+
+test('工具返回值无损：清单里缺 sessionId 的老行不能再让 outcome_list 报 invalid output', async () => {
+  const { tools, files, store } = harness()
+  // CLI 时代写入的行没有 sessionId（该字段是后加的可选元数据）—— 正是宿主拒绝 undefined 的来源
+  writeFileSync(store.registry, `${JSON.stringify({
+    id: '20260101-000000-aaaa',
+    title: 'legacy without sessionId',
+    kind: 'text',
+    paths: [join(files, 'report.html')],
+    by: '',
+    note: '',
+    cwd: files,
+    at: '2026-01-01T00:00:00.000Z',
+  })}\n`)
+
+  const list = tools.find((tool) => tool.name === 'outcome_list')
+  const listed = await list.execute({}, {})
+  assert.equal(listed.count, 1)
+  assert.ok(Object.prototype.hasOwnProperty.call(listed.rows[0], 'sessionId'), '缺字段必须补 null，而不是丢键')
+  assert.equal(listed.rows[0].sessionId, null)
+  assertLossless(listed, 'outcome_list')
+
+  // 其余返回值同一条规矩：add / update / check / remove / restore 全要过
+  const add = tools.find((tool) => tool.name === 'outcome_add')
+  const update = tools.find((tool) => tool.name === 'outcome_update')
+  const check = tools.find((tool) => tool.name === 'outcome_check')
+  const remove = tools.find((tool) => tool.name === 'outcome_remove')
+  const restore = tools.find((tool) => tool.name === 'outcome_restore')
+  const exec = { agent: { session: { id: '', header: { cwd: files } } } }
+  assertLossless(await add.execute({ title: 'no-session', paths: 'table.csv' }, exec), 'outcome_add')
+  assertLossless(await update.execute({ id: '20260101-000000-aaaa', note: 'touched' }, exec), 'outcome_update')
+  assertLossless(await check.execute({}, exec), 'outcome_check')
+  assertLossless(await remove.execute({ id: '20260101-000000-aaaa', why: 'test' }, exec), 'outcome_remove')
+  assertLossless(await restore.execute({ id: '20260101-000000-aaaa' }, exec), 'outcome_restore')
+})
+
 test('宿主没有 tools 服务时：只注册路由，不抛错', () => {
   const root = mkdtempSync(join(tmpdir(), 'dsh-outcomes-notools-'))
   const routes = []

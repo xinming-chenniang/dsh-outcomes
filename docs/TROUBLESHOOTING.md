@@ -85,6 +85,21 @@
 `curl`/脚本忘了带这个头就会 403；管理页自己带。
 **注意**：路由**不做鉴权**，能访问宿主端口的人就能改清单 —— 见 [`SECURITY.md`](../SECURITY.md)。
 
+## agent 调 `outcome_list` 报 `value is not lossless JSON`
+
+**症状**：`tool "outcome_list" returned invalid output: value is not lossless JSON`，但管理页 `/__dsh-outcomes`
+一切正常、`/api/list` 也返回 200。
+
+**原因**：清单里有**没有 `sessionId` 字段**的行（`sessionId` 是后加的可选元数据，CLI 时代写入的行没有）。
+工具层解构后这些字段是 `undefined`，而 DSH 宿主对工具返回值做**无损 JSON 校验** —— 拒绝**嵌套**
+`undefined`（`NaN` / `Infinity` 同理，见宿主 `isRemoteJsonValue`）。默认查询覆盖全量清单，只要表里
+有一条老行就整次失败；带 `q` / `kind` 过滤恰好避开老行时又会"正常"，所以看起来像间歇性故障。
+
+**怎么查**：数一下清单里缺 `sessionId` 的行；`test/host.test.mjs` 的「工具返回值无损」用例就是这条的回归。
+
+**怎么办**：工具返回值统一走 `lib/tools.js` 的 `jsonSafe()`（`undefined` → `null`，非有限数 → `null`）——
+**未发布版本起已修**。升级后需**重启 DSH**：宿主持有已装载的旧代码，改文件不会热更新。
+
 ## 还是不对
 
 1. `npm test` —— 覆盖清单核心、配置、并发、渲染页面、客户端半部；
