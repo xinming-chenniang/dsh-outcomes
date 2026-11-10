@@ -13,6 +13,8 @@
 
 其它语言：[English](README.en.md)
 
+> 如果对您有帮助，请点个 ⭐ Star。有问题欢迎开 [Issue](https://github.com/xinming-chenniang/dsh-outcomes/issues)，或者直接给我发邮件 xinming-chenniang@qq.com。
+
 ![DSH 成果清单管理页](assets/screenshots/manager-zh.png)
 
 （英文界面：`?lang=en`，截图见 [`assets/screenshots/manager-en.png`](assets/screenshots/manager-en.png)。

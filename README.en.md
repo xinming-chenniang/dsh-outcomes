@@ -4,6 +4,8 @@
 >
 > 把「最终成果」变成一等公民：agent 登记，人看图，脚本能查。中文文档见 [README.md](README.md)。
 
+> If it helps, a ⭐ star is appreciated. Bugs and requests: [open an issue](https://github.com/xinming-chenniang/dsh-outcomes/issues) or email xinming-chenniang@qq.com.
+
 Deliverables (reports, pages, documents, sheets, images, datasets) end up scattered across dozens of folders,
 and three days later nobody remembers which one is the final version. This plugin gives them one **registry**:
 one JSON object per line with title, type, source, note and originating session — plus an in-app manager page
