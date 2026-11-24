@@ -2,6 +2,19 @@
 
 > 按版本记录"改了什么、为什么、怎么验证的"。当前用法看 [README.md](README.md)。
 
+## 0.1.4 — 2026-11-24：HTTP 路由补上 DSH 访问检查（安全修复）
+
+- **fix（宿主半部 `lib/index.js`）**：`/__dsh-outcomes/*` 的准入第一道改为宿主 `ctx.connection.requestRejection`
+  （Host/Origin 栅栏 + 浏览器登录凭证），401/403 原样回给调用方，被拒的写入不落盘；`inject` 从 `['webServer']`
+  变为 `['webServer', 'connection']`。loopback / 同源两道保留为纵深防御。
+  由来：市场维护者 post-merge 审计给含 HTTP 路由的条目统一补了「没有 DSH 访问检查」的披露（452 条同句），
+  `dsh-button` 1.4.1 修完同款问题后复查本插件，发现同一处漏洞（prefix 路由、含写操作）。
+- **test（`test/host.test.mjs`）**：新增 3 例（401/403 按宿主判定拒绝 + 被拒写入不进清单；fence 先于 loopback；
+  主机放行后 loopback 仍 403），并钉住 `inject` 含 `connection`。`npm test` **104/104**（原 99）。
+  反向验证：把 fence 判定改成恒假 → 两例失败（`actual: 200, expected: 403`）；恢复后全绿。
+- **docs**：`SECURITY.md` 删掉「路由没有鉴权」那条已知取舍，改写成 0.1.4 起的准入说明（并注明 ≤0.1.3 的情况）。
+- **宿主半部改动 → 重启 DSH 生效**。
+
 ## 0.1.3 — 2026-11-09
 
 - fix: 工具返回值缺字段补 `null`。清单里 CLI 时代写入的行没有 `sessionId` 字段（该字段是后加的可选元数据），

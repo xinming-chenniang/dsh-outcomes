@@ -20,17 +20,20 @@ function harness() {
 
   const routes = []
   const tools = []
+  /** 宿主 `ctx.connection.requestRejection` 的桩：每个请求都会问它，`fence.reject` 模拟判定。 */
+  const fence = { reject: undefined, seen: 0 }
   const ctx = {
     logger: { info() {}, warn() {} },
     effect(fn) { const dispose = fn(); return () => { if (typeof dispose === 'function') dispose() } },
     on() {},
     get(service) { return service === 'tools' ? { register(definition) { tools.push(definition); return () => {} } } : undefined },
     webServer: { register(route) { routes.push(route); return () => {} } },
+    connection: { requestRejection(req) { fence.seen += 1; return fence.reject } },
   }
   const exported = apply(ctx, { dir: data, treatSystemTempAsWarning: false })
   applyTools(ctx, { dir: data, treatSystemTempAsWarning: false })
   assert.equal(routes.length, 1)
-  return { root, files, data, routes, tools, ctx, store: exported.store, route: routes[0] }
+  return { root, files, data, routes, tools, ctx, fence, store: exported.store, route: routes[0] }
 }
 
 /** 最小 req/res 桩：够跑 `new URL(req.url, ...)`、读 body、以及 res.writeHead/end。 */
@@ -69,7 +72,43 @@ test('插件导出契约：name / inject / apply，并按前缀注册路由', ()
   assert.equal(typeof route.handler, 'function')
 })
 
-test('非 loopback 请求一律 403（宿主前缀路由不过 Web 登录鉴权）', async () => {
+test('接入宿主的访问检查：inject 声明 connection，且每个请求都问一次', async () => {
+  const mod = await import('../lib/index.js')
+  assert.ok(mod.inject.includes('webServer'))
+  assert.ok(mod.inject.includes('connection'), 'inject 缺 connection → cordis 不会在 apply 前等这个服务，检查会静默失效')
+
+  const { route, fence } = harness()
+  const ok = await call(route, { url: '/api/status' })
+  assert.equal(ok.status, 200)
+  assert.equal(fence.seen, 1)
+})
+
+test('宿主判 403 / 401 时按它的状态码拒绝，被拒的写入不进清单', async () => {
+  const { route, fence, store, files } = harness()
+  fence.reject = 403
+  const forbidden = await call(route, { url: '/api/status' })
+  assert.equal(forbidden.status, 403)
+  assert.match(forbidden.body, /forbidden/)
+
+  fence.reject = 401
+  const unauthenticated = await call(route, {
+    method: 'POST', url: '/api/add', headers: { [GUARD_HEADER]: '1' },
+    body: { title: '不该落盘', paths: join(files, 'report.html') },
+  })
+  assert.equal(unauthenticated.status, 401)
+  assert.match(unauthenticated.body, /unauthorized/)
+  assert.equal(store.list({ limit: 10 }).length, 0)
+})
+
+test('fence 先于 loopback：外部地址也按宿主的判定回，而不是先报 loopback-only', async () => {
+  const { route, fence } = harness()
+  fence.reject = 401
+  const res = await call(route, { url: '/api/status', remoteAddress: '10.1.2.3' })
+  assert.equal(res.status, 401)
+  assert.doesNotMatch(res.body, /loopback-only/)
+})
+
+test('纵深防御：主机判定放行后，非 loopback 仍 403', async () => {
   const { route } = harness()
   const res = await call(route, { url: '/api/status', remoteAddress: '10.1.2.3' })
   assert.equal(res.status, 403)
@@ -268,6 +307,7 @@ test('GET /api/list 的窗口：默认用 pageSize、显式 limit 被尊重、�
     effect(fn) { fn() },
     get() { return undefined },
     webServer: { register(route) { routes.push(route); return () => {} } },
+    connection: { requestRejection() { return undefined } },
   }
   // pageSize=3：不传 limit 时只回 3 条
   apply(ctx, { dir: join(root, 'data'), pageSize: 3, treatSystemTempAsWarning: false })
@@ -462,6 +502,7 @@ test('宿主没有 tools 服务时：只注册路由，不抛错', () => {
     effect(fn) { fn() },
     get() { return undefined },
     webServer: { register(route) { routes.push(route); return () => {} } },
+    connection: { requestRejection() { return undefined } },
   }
   const exported = apply(ctx, { dir: join(root, 'data') })
   applyTools(ctx, { dir: join(root, 'data') })

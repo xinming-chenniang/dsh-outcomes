@@ -19,13 +19,15 @@ Short version:
 | In scope | Out of scope |
 |---|---|
 | A registered **web page** trying to reach your DSH session when you preview it | Malware already running as your user |
-| **Cross-site / accidental writes** to the registry (write guard header + loopback-only routes) | Someone with access to your unlocked machine |
-| A **path traversal** attempt on the file route (URL carries only `id` + index; paths come from the registry) | People you gave your DSH port to (the routes have no authentication — see below) |
+| **Cross-site / accidental writes** to the registry (DSH access check + write guard header + loopback-only routes) | Someone with access to your unlocked machine |
+| A **path traversal** attempt on the file route (URL carries only `id` + index; paths come from the registry) | People you gave your DSH port to (they still need a DSH login — see below) |
 | A malicious **registered file name** (no shell interpolation anywhere; content-disposition is sanitised) | Data at rest (delete the registry and it is gone — it is a plain JSONL file) |
 
-**Known, deliberate trade-off: the routes are not authenticated.** They are served by DSH's own web server
-and are exactly as reachable as the DSH UI itself. If you expose DSH beyond loopback, put authentication in
-front of it (reverse proxy) — this plugin does not add its own.
+**Route admission (0.1.4 and later).** Every request on `/__dsh-outcomes/*` first goes through DSH's own access
+check, `ctx.connection.requestRejection` — the host's Host/Origin fence plus its browser-session credential — and the
+route answers 401/403 exactly as that check does. Loopback-only and same-origin checks stay as defence in depth.
+Earlier versions (≤ 0.1.3) relied on loopback + same-origin alone, which meant a page open in any browser could have
+called the routes; that is what 0.1.4 fixes.
 
 ## Reporting a vulnerability
 

@@ -30,6 +30,7 @@ async function mount() {
     effect(fn) { fn() },
     get() { return undefined },
     webServer: { register(route) { routes.push(route); return () => {} } },
+    connection: { requestRejection() { return undefined } },
   }
   apply(ctx, { dir: join(root, 'data'), treatSystemTempAsWarning: false })
 

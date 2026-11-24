@@ -172,7 +172,7 @@ test('宿主拆成两半：工具半不依赖 Web 服务，页面半才等 Web �
 
   assert.match(tools, /export const inject = \['tools'\]/, '工具半必须只等 tools 服务')
   assert.ok(!code(tools).includes('webServer'), '工具半的**代码**里不该出现 webServer')
-  assert.match(page, /export const inject = \['webServer'\]/, '页面半必须等 webServer')
+  assert.match(page, /export const inject = \['webServer', 'connection'\]/, '页面半必须等 webServer 与 connection（访问检查走后者）')
   assert.ok(!code(page).includes("name: 'outcome_"), '工具定义不该留在页面半里')
 
   const patch = readFileSync(join(ROOT, 'cordis.patch.yml'), 'utf8')
