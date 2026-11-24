@@ -22,7 +22,7 @@
 - 验证：`npm test` **104/104**（新增 3 例 + 钉 inject）；反向验证（fence 改恒假 → `actual: 200, expected: 403`）；
   `npm run preflight` 通过；`npm pack` = 32 文件 / 223.5 kB，shasum `dcf15b76…`。
 - 发布：tag `v0.1.4` + GitHub Release（资产 `dsh-outcomes-0.1.4.tgz`，223,466 B，URL HEAD 200）→ `npm stage publish`（stage `bd1a9892-…`）→ approve 过浏览器 OTP → `dist-tags` = **0.1.4**、npm tarball HEAD 200、shasum `dcf15b76…` 与本地 pack 一致；市场 PR **#18429 已 MERGED（2026-11-24）**。
-- 未做：**宿主半部要重启 DSH 才生效**，重启后真机未点（重启后 GET 一次 `/__dsh-outcomes/api/status` 看是否 200）。
+- 已实测（2026-11-25 01:3x 重启后）：无凭证 `GET /__dsh-outcomes/api/status` → **401** `{"ok":false,"error":"unauthorized",...}`（旧代码这里是 200 + 清单统计），fence 已生效。
 - 顺带纠正：老文档写「npm 0.1.3 / 市场钉 0.1.2」已过时 —— 0.1.3 曾发布、条目后来跟到了 v0.1.3，但从没为 0.1.3 开过 PR。
 
 ## 硬规则
