@@ -32,3 +32,9 @@
 - 发布前：`npm test`、`npm run preflight`、`npm pack --dry-run`、README/CHANGELOG 对齐、干净工作树。
 - 市场 PR 只钉一个已发布版本；合并前不改 tarball。
 - 不改 `~/.dsh/profiles`；profile 只 `link:` 本目录。
+- **未决（2026-11-25 记）**：修复后**外部浏览器**打开 `http://127.0.0.1:<port>/__dsh-outcomes/` 会得到
+  `{"ok":false,"error":"unauthorized",...}`（用户实测贴回）。判断：那是没有 DSH 登录 cookie 的客户端，
+  **旧版能看得见正是因为这条路由对任何本机浏览器开放**——即这次堵的洞本身。
+  应用内（同源、带 cookie）的成果面板**尚未确认**：下次接手先看「设置 → 成果」能不能列出清单。
+  若确实要恢复"浏览器里看整页"：① 不恢复，文档写清只给应用内/调试用（推荐）；② 走 DSH 的 `?token=`（插件侧没有现成
+  mint 接口，需要宿主暴露）；③ 给顶层导航开 `Sec-Fetch-Site` 豁免（不推荐，等于再自造一套判据）。
